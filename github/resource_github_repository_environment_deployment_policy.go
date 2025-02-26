@@ -83,16 +83,19 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicyCreate(d *schema.Resourc
 		return err
 	}
 
-	d.SetId(buildThreePartID(repoName, escapedEnvName, strconv.FormatInt(resultKey.GetID(), 10)))
+	d.SetId(buildThreePartID(repoName, envName, strconv.FormatInt(resultKey.GetID(), 10)))
 	return resourceGithubRepositoryEnvironmentDeploymentPolicyRead(d, meta)
 }
 
 func resourceGithubRepositoryEnvironmentDeploymentPolicyRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Owner).v3client
 	ctx := context.WithValue(context.Background(), ctxId, d.Id())
-
 	owner := meta.(*Owner).name
-	repoName, envName, branchPolicyIdString, err := parseThreePartID(d.Id(), "repository", "environment", "branchPolicyId")
+
+	repoName := d.Get("repository").(string)
+	envName := d.Get("environment").(string)
+	escapedEnvName := url.PathEscape(envName)
+	_, _, branchPolicyIdString, err := parseThreePartID(d.Id(), "repository", "environment", "branchPolicyId")
 	if err != nil {
 		return err
 	}
@@ -102,7 +105,7 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicyRead(d *schema.ResourceD
 		return err
 	}
 
-	branchPolicy, _, err := client.Repositories.GetDeploymentBranchPolicy(ctx, owner, repoName, envName, branchPolicyId)
+	branchPolicy, _, err := client.Repositories.GetDeploymentBranchPolicy(ctx, owner, repoName, escapedEnvName, branchPolicyId)
 	if err != nil {
 		if ghErr, ok := err.(*github.ErrorResponse); ok {
 			if ghErr.Response.StatusCode == http.StatusNotModified {
@@ -159,7 +162,7 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicyUpdate(d *schema.Resourc
 	if err != nil {
 		return err
 	}
-	d.SetId(buildThreePartID(repoName, escapedEnvName, strconv.FormatInt(resultKey.GetID(), 10)))
+	d.SetId(buildThreePartID(repoName, envName, strconv.FormatInt(resultKey.GetID(), 10)))
 	return resourceGithubRepositoryEnvironmentDeploymentPolicyRead(d, meta)
 }
 
@@ -168,7 +171,10 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicyDelete(d *schema.Resourc
 	ctx := context.Background()
 
 	owner := meta.(*Owner).name
-	repoName, envName, branchPolicyIdString, err := parseThreePartID(d.Id(), "repository", "environment", "branchPolicyId")
+	repoName := d.Get("repository").(string)
+	envName := d.Get("environment").(string)
+	escapedEnvName := url.PathEscape(envName)
+	_, _, branchPolicyIdString, err := parseThreePartID(d.Id(), "repository", "environment", "branchPolicyId")
 	if err != nil {
 		return err
 	}
@@ -178,7 +184,7 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicyDelete(d *schema.Resourc
 		return err
 	}
 
-	_, err = client.Repositories.DeleteDeploymentBranchPolicy(ctx, owner, repoName, envName, branchPolicyId)
+	_, err = client.Repositories.DeleteDeploymentBranchPolicy(ctx, owner, repoName, escapedEnvName, branchPolicyId)
 	if err != nil {
 		return err
 	}
