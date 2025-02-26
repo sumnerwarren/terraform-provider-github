@@ -19,7 +19,7 @@ func resourceGithubRepositoryEnvironmentDeploymentPolicy() *schema.Resource {
 		Update: resourceGithubRepositoryEnvironmentDeploymentPolicyUpdate,
 		Delete: resourceGithubRepositoryEnvironmentDeploymentPolicyDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			State: resourceGithubRepositoryEnvironmentDeploymentPolicyImport,
 		},
 		Schema: map[string]*schema.Schema{
 			"repository": {
@@ -219,4 +219,25 @@ func customDeploymentPolicyDiffFunction(_ context.Context, diff *schema.Resource
 	}
 
 	return nil
+}
+
+func resourceGithubRepositoryEnvironmentDeploymentPolicyImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	repoName, envName, _, err := parseThreePartID(d.Id(), "repository", "environment", "branchPolicyId")
+	if err != nil {
+		return nil, err
+	}
+
+	if err = d.Set("repository", repoName); err != nil {
+		return nil, err
+	}
+	if err = d.Set("environment", envName); err != nil {
+		return nil, err
+	}
+
+	err = resourceGithubRepositoryEnvironmentDeploymentPolicyRead(d, meta)
+	if err != nil {
+		return nil, err
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
