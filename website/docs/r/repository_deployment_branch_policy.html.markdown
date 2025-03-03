@@ -7,8 +7,9 @@ description: |-
 
 # github_repository_deployment_branch_policy
 
-This resource allows you to create and manage deployment branch policies.
+!> **Warning**: This resource is deprecated and will be removed in the next major version of the GitHub provider. Please use the [`github_repository_environment_deployment_policy`](./repository_environment_deployment_policy.html) resource instead.
 
+This resource allows you to create and manage deployment branch policies.
 
 ## Example Usage
 

@@ -7,6 +7,8 @@ description: |-
 
 # github_repository_deployment_branch_policies
 
+!> **Warning**: This data source is deprecated and will be removed in the next major version of the GitHub provider. Please use the [`github_repository_environment_deployment_policies`](./repository_environment_deployment_policies.html) data source instead.
+
 Use this data source to retrieve deployment branch policies for a repository / environment.
 
 ## Example Usage

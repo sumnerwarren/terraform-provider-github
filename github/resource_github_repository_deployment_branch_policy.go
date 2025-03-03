@@ -12,10 +12,11 @@ import (
 
 func resourceGithubRepositoryDeploymentBranchPolicy() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceGithubRepositoryDeploymentBranchPolicyCreate,
-		Read:   resourceGithubRepositoryDeploymentBranchPolicyRead,
-		Update: resourceGithubRepositoryDeploymentBranchPolicyUpdate,
-		Delete: resourceGithubRepositoryDeploymentBranchPolicyDelete,
+		DeprecationMessage: "This resource is deprecated and will be removed in the next major version of the GitHub provider. Please use the `github_repository_environment_deployment_policy` resource instead.",
+		Create:             resourceGithubRepositoryDeploymentBranchPolicyCreate,
+		Read:               resourceGithubRepositoryDeploymentBranchPolicyRead,
+		Update:             resourceGithubRepositoryDeploymentBranchPolicyUpdate,
+		Delete:             resourceGithubRepositoryDeploymentBranchPolicyDelete,
 		Importer: &schema.ResourceImporter{
 			State: resourceGithubRepositoryDeploymentBranchPolicyImport,
 		},
